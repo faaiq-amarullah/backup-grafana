@@ -1,21 +1,9 @@
 ---
 - name: Playbook for backup grafana roles
   hosts: all
-  become: true
   vars_files:
     - vars.yaml
   tasks:
-    - name: Install required package
-      ansible.builtin.apt:
-        name: python3-docker
-        state: present
-
-    - name: Pull Docker image
-      community.docker.docker_image:
-        name: adeiqbal/backup-grafana
-        tag: '1.0'
-        source: pull
-
     - name: Create a backup directory on the host
       ansible.builtin.file:
         path: '{{ backup_dir }}'
@@ -23,18 +11,8 @@
         mode: '0755'
 
     - name: Run Docker container for backup
-      community.docker.docker_container:
-        name: backup-container
-        image: adeiqbal/backup-grafana:1.0
-        env:
-          GRAFANA_URL: "{{ grafana_url }}"
-          API_KEY: "{{ grafana_token }}"
-        volumes:
-          - "{{ backup_dir }}:/app/grafana_backup"
-        state: started
-        restart_policy: no
+      ansible.builtin.command: "docker run --rm --name backup-container -e GRAFANA_URL={{ grafana_url }} -e API_KEY={{ grafana_token }} -v {{ backup_dir }}:/app/grafana_backup {{ backup_image }}"
+      register: backup_status
 
-    - name: Remove the Docker container after backup
-      community.docker.docker_container:
-        name: backup-container
-        state: absent
+    - debug:
+        var: backup_status.stdout_lines

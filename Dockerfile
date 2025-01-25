@@ -1,4 +1,4 @@
-kan image Python sebagai base
+# Gunakan image Python sebagai base
 FROM python:3.9-slim
 
 # Set direktori kerja di dalam container
