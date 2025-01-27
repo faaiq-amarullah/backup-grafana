@@ -2,6 +2,6 @@
 # vars file for roles/docker
 grafana_url: "URL"
 grafana_token: "TOKEN"
-backup_image: "adeiqbal/backup-grafana:1.0"
+backup_image: "adeiqbal/backup-grafana:2.0"
 backup_dir: "/opt/grafana_backup"
 venv_dir: "/opt/.venv"
